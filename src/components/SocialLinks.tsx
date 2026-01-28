@@ -29,19 +29,19 @@ const socials = [
     {
         name: "Telegram",
         icon: Send,
-        href: "https://t.me/argus_surveillance",
+        href: "https://t.me/ArgusWatch",
         tooltip: "Join Telegram",
     },
     {
         name: "X (Twitter)",
         icon: Twitter,
-        href: "https://x.com/argus_surveil",
+        href: "https://x.com/ArgusWatchEye",
         tooltip: "Follow on X",
     },
     {
         name: "Git.Hub",
         icon: Github,
-        href: "https://github.com/salimmohamed/colorstackwinterhack2025-argus",
+        href: "https://github.com/ArgusWatchEye",
         tooltip: "Git.Hub",
     },
 ];
