@@ -5,6 +5,8 @@ import Link from "next/link";
 import { PixelBlastEye } from "@/components/ui/pixel-blast-eye";
 import { api } from "../../convex/_generated/api";
 
+import { ContractAddress } from "@/components/ContractAddress";
+
 export default function Home() {
   const markets = useQuery(api.markets.listActive, {});
 
@@ -29,6 +31,12 @@ export default function Home() {
                 className="text-[var(--text-dim)] text-xs tracking-[0.15em] uppercase py-2 border-b border-transparent hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all"
               >
                 Suspects
+              </Link>
+              <Link
+                href="/docs"
+                className="text-[var(--text-dim)] text-xs tracking-[0.15em] uppercase py-2 border-b border-transparent hover:text-[var(--accent)] hover:border-[var(--accent)] transition-all"
+              >
+                Documentation
               </Link>
             </nav>
           </header>
@@ -89,21 +97,28 @@ export default function Home() {
               </div>
             </div>
 
-            <Link
-              href="/markets"
-              className="inline-flex items-center gap-2 text-[var(--foreground)] text-xs tracking-[0.04em] py-3 border-t border-b border-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:pl-2 transition-all w-fit group animate-fadeSlideUp"
-              style={{ animationDelay: "1s" }}
-            >
-              View Monitored Markets
-              <span className="transition-transform group-hover:translate-x-1">
-                →
-              </span>
-            </Link>
+            <div className="flex flex-col gap-6">
+              <Link
+                href="/markets"
+                className="inline-flex items-center gap-2 text-[var(--foreground)] text-xs tracking-[0.04em] py-3 border-t border-b border-[var(--text-muted)] hover:text-[var(--accent)] hover:border-[var(--accent)] hover:pl-2 transition-all w-fit group animate-fadeSlideUp"
+                style={{ animationDelay: "1s" }}
+              >
+                View Monitored Markets
+                <span className="transition-transform group-hover:translate-x-1">
+                  →
+                </span>
+              </Link>
+
+              <ContractAddress
+                address="hsAgiRGvqBD5GeZxed9iDKpvFpwiq7iL7REjsB8pump"
+                delay="1.2s"
+              />
+            </div>
           </main>
 
           <footer
             className="pt-8 animate-fadeSlideUp"
-            style={{ animationDelay: "1.2s" }}
+            style={{ animationDelay: "1.4s" }}
           >
             <p className="font-serif italic text-sm text-[var(--text-dim)] leading-6">
               &ldquo;He had a hundred eyes, of which only two would sleep at a
