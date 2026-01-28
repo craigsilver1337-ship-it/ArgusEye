@@ -97,6 +97,10 @@ export function PixelBlastEye({
     autonomousGazeTimer: 0,
     isMouseActive: false,
     ripples: [] as Ripple[],
+    // Blink state
+    blinkProgress: -1,
+    nextBlinkTime: 5 + Math.random() * 5,
+    doubleBlink: false,
   });
 
   // Parse color to RGB
@@ -127,13 +131,14 @@ export function PixelBlastEye({
       gazeOffsetY: number,
       cols: number,
       rows: number,
+      blinkFactor: number,
     ): { intensity: number; blend: number } => {
       const dx = x - centerX;
       const dy = y - centerY;
 
       const breathe = 1 + Math.sin(time * 0.5) * 0.03;
       const eyeWidth = Math.min(cols, rows) * 0.42 * breathe;
-      const eyeHeight = eyeWidth * 0.38;
+      const eyeHeight = eyeWidth * 0.38 * blinkFactor;
 
       const irisRadius = eyeWidth * 0.35;
       const pupilRadius = irisRadius * 0.4;
@@ -214,7 +219,7 @@ export function PixelBlastEye({
         state.targetGazeY = (state.mouseY - canvasCenterY) / (state.height / 2);
         const mag = Math.sqrt(
           state.targetGazeX * state.targetGazeX +
-            state.targetGazeY * state.targetGazeY,
+          state.targetGazeY * state.targetGazeY,
         );
         if (mag > 1) {
           state.targetGazeX /= mag;
@@ -291,10 +296,38 @@ export function PixelBlastEye({
     };
 
     const draw = (currentTime: number) => {
-      const deltaTime = (currentTime - state.lastFrameTime) / 1000;
+      const deltaTime = Math.min((currentTime - state.lastFrameTime) / 1000, 0.1);
       state.lastFrameTime = currentTime;
 
-      updateGaze(Math.min(deltaTime, 0.1), state);
+      // Update blink logic
+      if (state.blinkProgress === -1) {
+        if (state.time >= state.nextBlinkTime) {
+          state.blinkProgress = 0;
+          state.doubleBlink = Math.random() > 0.6; // 40% chance of double blink
+        }
+      } else {
+        const blinkDuration = 0.18; // ~180ms for a blink
+        state.blinkProgress += deltaTime / blinkDuration;
+
+        if (state.blinkProgress >= 1) {
+          if (state.doubleBlink) {
+            state.blinkProgress = 0;
+            state.doubleBlink = false;
+          } else {
+            state.blinkProgress = -1;
+            state.nextBlinkTime = state.time + 5 + Math.random() * 5; // Every 5-10s
+          }
+        }
+      }
+
+      let blinkFactor = 1;
+      if (state.blinkProgress !== -1) {
+        // Smooth blink curve: 1 -> 0 -> 1 using sine
+        const t = state.blinkProgress;
+        blinkFactor = Math.max(0.001, 1 - Math.pow(Math.sin(t * Math.PI), 1.5));
+      }
+
+      updateGaze(deltaTime, state);
 
       ctx.fillStyle = "#030303";
       ctx.fillRect(0, 0, state.width, state.height);
@@ -334,6 +367,7 @@ export function PixelBlastEye({
             state.gazeY,
             state.cols,
             state.rows,
+            blinkFactor,
           );
 
           let opacity =
